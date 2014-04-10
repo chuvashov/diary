@@ -12,6 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.example.diary.todo.ToDoListFragment;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
+
+import java.net.MalformedURLException;
 
 public class DiaryActivity extends Activity {
 
@@ -25,6 +28,13 @@ public class DiaryActivity extends Activity {
      */
     public static final String appKey = "WsbGbXpVcLkvxwvrWFsUxLWHFOQgkP36";
 
+    private static final String warning = "Warning";
+
+    /**
+     * Mobile Service Client reference
+     */
+    private MobileServiceClient mClient;
+
     /**
      * Sliding menu used to show app
      */
@@ -37,7 +47,7 @@ public class DiaryActivity extends Activity {
 
     private ToDoListFragment listFragment;
 
-    private static final int TO_DO_LIST = 2;
+    private static final int TO_DO_LIST = 1;
 
     private int curMenuItem;
 
@@ -52,11 +62,23 @@ public class DiaryActivity extends Activity {
         // Initialize fragments
         listFragment = new ToDoListFragment();
 
+        try {
+            // Create the Mobile Service Client instance, using the provided
+            // Mobile Service URL and key
+            mClient = new MobileServiceClient(DiaryActivity.appURL, DiaryActivity.appKey, this);
+            listFragment.setClient(mClient);
+
+        } catch (MalformedURLException e) {
+            Dialog.createAndShowDialog(new Exception("There was an error connecting the Mobile Service"),
+                    warning, this);
+        }
+
         // Show the first fragment
         curMenuItem = TO_DO_LIST;
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.mainFrameLayout, listFragment);
         fTrans.commit();
+        getActionBar().setTitle(R.string.to_do_list);
 
         // Create and setting Sliding Menu
         menu = new SlidingMenu(this);
@@ -83,6 +105,7 @@ public class DiaryActivity extends Activity {
                     switch (position) {
                         case TO_DO_LIST:
                             fTrans.replace(R.layout.layuot_to_do, listFragment);
+                            getActionBar().setTitle(R.string.to_do_list);
                             break;
 
                     }

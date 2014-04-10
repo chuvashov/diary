@@ -1,6 +1,5 @@
 package com.example.diary.todo;
 
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,19 +9,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import com.example.diary.DiaryActivity;
+import com.example.diary.Dialog;
 import com.example.diary.R;
 import com.microsoft.windowsazure.mobileservices.*;
 
-import java.net.MalformedURLException;
 import java.util.List;
-
-import static com.microsoft.windowsazure.mobileservices.MobileServiceQueryOperations.val;
 
 /**
  * Created by Andrey on 07.04.2014.
  */
 public class ToDoListFragment extends Fragment {
+
+    private static final String warning = "Warning";
 
     /**
      * Mobile Service Client reference
@@ -49,7 +47,6 @@ public class ToDoListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layuot_to_do, null);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.loadingProgressBar);
         mTextNewToDo = (EditText) view.findViewById(R.id.textNewToDo);
 
         // Create listener to add button
@@ -65,11 +62,20 @@ public class ToDoListFragment extends Fragment {
         mAdapter = new ToDoItemAdapter(getActivity(), R.layout.row_list_to_do, this);
         ListView listViewToDo = (ListView) view.findViewById(R.id.listViewToDo);
         listViewToDo.setAdapter(mAdapter);
-        connect();
         return view;
     }
 
-    public void connect(){
+    public void setClient(MobileServiceClient client){
+        mClient = client;
+
+        // Get the Mobile Service Table instance to use
+        mToDoTable = mClient.getTable(ToDoItem.class);
+
+        // Load the items from the Mobile Service
+        refreshItemsFromTable();
+    }
+
+    /*public void connect(){
         // Initialize the progress bar
         mProgressBar.setVisibility(ProgressBar.GONE);
 
@@ -78,7 +84,7 @@ public class ToDoListFragment extends Fragment {
             // Mobile Service URL and key
             mClient = new MobileServiceClient(DiaryActivity.appURL, DiaryActivity.appKey,
                     getActivity()).withFilter(new ToDoProgressFilter(getActivity(), mProgressBar));
-
+            mClient.withFilter(new ToDoProgressFilter(getActivity(), mProgressBar));
             // Get the Mobile Service Table instance to use
             mToDoTable = mClient.getTable(ToDoItem.class);
 
@@ -86,10 +92,11 @@ public class ToDoListFragment extends Fragment {
             refreshItemsFromTable();
 
         } catch (MalformedURLException e) {
-            createAndShowDialog(new Exception("There was an error connecting the Mobile Service"), "Error");
+            Dialog.createAndShowDialog(new Exception("There was an error connecting the Mobile Service"),
+                    "Error", getActivity());
         }
 
-    }
+    }  */
 
     /**
      * Mark an item as completed
@@ -102,18 +109,13 @@ public class ToDoListFragment extends Fragment {
             return;
         }
 
-        // Set the item as completed and update it in the table
-        item.setComplete(true);
-
         mToDoTable.update(item, new TableOperationCallback<ToDoItem>() {
 
             public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
                 if (exception == null) {
-                    if (entity.isComplete()) {
-                        mAdapter.remove(entity);
-                    }
+                    mAdapter.remove(entity);
                 } else {
-                    createAndShowDialog(exception, "Error");
+                    Dialog.createAndShowDialog(exception, warning, getActivity());
                 }
             }
 
@@ -135,7 +137,6 @@ public class ToDoListFragment extends Fragment {
         ToDoItem item = new ToDoItem();
 
         item.setText(mTextNewToDo.getText().toString());
-        item.setComplete(false);
 
         // Insert the new item
         mToDoTable.insert(item, new TableOperationCallback<ToDoItem>() {
@@ -143,11 +144,9 @@ public class ToDoListFragment extends Fragment {
             public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
 
                 if (exception == null) {
-                    if (!entity.isComplete()) {
-                        mAdapter.add(entity);
-                    }
+                    mAdapter.add(entity);
                 } else {
-                    createAndShowDialog(exception, "Error");
+                    Dialog.createAndShowDialog(exception, warning, getActivity());
                 }
 
             }
@@ -161,9 +160,8 @@ public class ToDoListFragment extends Fragment {
      */
     public void refreshItemsFromTable() {
 
-        // Get the items that weren't marked as completed and add them in the
-        // adapter
-        mToDoTable.where().field("complete").eq(val(false)).execute(new TableQueryCallback<ToDoItem>() {
+        // Get the items that weren't marked as completed and add them in the adapter
+        mToDoTable.execute(new TableQueryCallback<ToDoItem>() {
 
             public void onCompleted(List<ToDoItem> result, int count, Exception exception, ServiceFilterResponse response) {
                 if (exception == null) {
@@ -174,42 +172,10 @@ public class ToDoListFragment extends Fragment {
                     }
 
                 } else {
-                    createAndShowDialog(exception, "Error");
+                    Dialog.createAndShowDialog(exception, warning, getActivity());
                 }
             }
         });
     }
 
-    /**
-     * Creates a dialog and shows it
-     *
-     * @param exception
-     *            The exception to show in the dialog
-     * @param title
-     *            The dialog title
-     */
-    private void createAndShowDialog(Exception exception, String title) {
-        Throwable ex = exception;
-        if(exception.getCause() != null){
-            ex = exception.getCause();
-        }
-        createAndShowDialog(ex.getMessage(), title);
-    }
-
-    /**
-     * Creates a dialog and shows it
-     *
-     * @param message
-     *            The dialog message
-     * @param title
-     *            The dialog title
-     */
-    private void createAndShowDialog(String message, String title) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setMessage(message);
-        builder.setTitle(title);
-        builder.setPositiveButton("OK", null);
-        builder.create().show();
-    }
 }

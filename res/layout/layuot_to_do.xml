@@ -1,12 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/fragment_color"
     >
 
-    <LinearLayout
+    <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="6dip" >
@@ -22,17 +24,16 @@
 
         <ProgressBar
             android:id="@+id/loadingProgressBar"
-            android:layout_width="28dp"
-            android:layout_height="28dp" />
-    </LinearLayout>
+            android:layout_width="30dp"
+            android:layout_height="match_parent" />
+    </LinearLayout-->
 
-    <LinearLayout
+    <!--LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="6dp">
 
-
-        <!--<EditText
+        <EditText
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -52,9 +53,9 @@
         <DatePicker
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/datePicker"/> -->
+                android:id="@+id/datePicker"/>
 
-    </LinearLayout>
+    </LinearLayout-->
 
 
     <LinearLayout
@@ -82,10 +83,30 @@
     <ListView
         android:id="@+id/listViewToDo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         tools:listitem="@layout/row_list_to_do"
-        android:padding="6dip" >
+        android:padding="6dip"
+        android:layout_margin="6dp"
+        android:background="@android:color/white">
 
     </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_button_text"/>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_button_text"/>
+
+    </LinearLayout>
 
 </LinearLayout>

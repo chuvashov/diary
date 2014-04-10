@@ -14,9 +14,6 @@ public class ToDoProgressFilter implements ServiceFilter {
 
     public ToDoProgressFilter(Activity activity, ProgressBar progressBar) {
         mProgressBar = progressBar;
-        if (activity == null){
-            System.out.println("null activity");
-        }
         this.activity = activity;
     }
 
