@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 
 /**
- * Created by Andrey on 08.04.2014.
+ * Create and show a warning dialogs
  */
 public class Dialog {
 

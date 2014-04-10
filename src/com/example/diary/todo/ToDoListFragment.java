@@ -1,6 +1,8 @@
 package com.example.diary.todo;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import com.example.diary.Dialog;
 import com.example.diary.R;
 import com.microsoft.windowsazure.mobileservices.*;
@@ -20,6 +21,9 @@ import java.util.List;
  */
 public class ToDoListFragment extends Fragment {
 
+    /**
+     * Title of a warning dialog
+     */
     private static final String warning = "Warning";
 
     /**
@@ -42,7 +46,7 @@ public class ToDoListFragment extends Fragment {
      */
     private EditText mTextNewToDo;
 
-    private ProgressBar mProgressBar;
+    private ToDoItem item;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +59,30 @@ public class ToDoListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addItem(v);
+            }
+        });
+
+        // Create listener to edit button
+        Button edit = (Button) view.findViewById(R.id.buttonEditToDo);
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final EditText input = new EditText(getActivity());
+                builder.setView(input);
+
+                // Create listener to positive button of the edit dialog
+                builder.setTitle("Edit notice");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editItem();
+                    }
+                });
+
+                builder.setNegativeButton("Cancel", null);
+                builder.setCancelable(true);
+                builder.create().show();
             }
         });
 
@@ -75,29 +103,6 @@ public class ToDoListFragment extends Fragment {
         refreshItemsFromTable();
     }
 
-    /*public void connect(){
-        // Initialize the progress bar
-        mProgressBar.setVisibility(ProgressBar.GONE);
-
-        try {
-            // Create the Mobile Service Client instance, using the provided
-            // Mobile Service URL and key
-            mClient = new MobileServiceClient(DiaryActivity.appURL, DiaryActivity.appKey,
-                    getActivity()).withFilter(new ToDoProgressFilter(getActivity(), mProgressBar));
-            mClient.withFilter(new ToDoProgressFilter(getActivity(), mProgressBar));
-            // Get the Mobile Service Table instance to use
-            mToDoTable = mClient.getTable(ToDoItem.class);
-
-            // Load the items from the Mobile Service
-            refreshItemsFromTable();
-
-        } catch (MalformedURLException e) {
-            Dialog.createAndShowDialog(new Exception("There was an error connecting the Mobile Service"),
-                    "Error", getActivity());
-        }
-
-    }  */
-
     /**
      * Mark an item as completed
      *
@@ -114,6 +119,27 @@ public class ToDoListFragment extends Fragment {
             public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
                 if (exception == null) {
                     mAdapter.remove(entity);
+                } else {
+                    Dialog.createAndShowDialog(exception, warning, getActivity());
+                }
+            }
+
+        });
+    }
+
+    /**
+     * Edit the text of item
+     */
+    public void editItem(){
+        if (mClient == null || item == null) {
+            return;
+        }
+
+        mToDoTable.update(item, new TableOperationCallback<ToDoItem>() {
+
+            public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
+                if (exception == null) {
+                    //mAdapter.remove(entity);
                 } else {
                     Dialog.createAndShowDialog(exception, warning, getActivity());
                 }
