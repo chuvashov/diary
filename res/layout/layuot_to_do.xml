@@ -28,40 +28,10 @@
             android:layout_height="match_parent" />
     </LinearLayout-->
 
-    <!--LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dp">
-
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:hint="add a date"
-                android:ems="10"
-                android:id="@+id/editText"/>
-
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:inputType="time"
-                android:hint="add a time"
-                android:ems="10"
-                android:id="@+id/editText2"/>
-        <DatePicker
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/datePicker"/>
-
-    </LinearLayout-->
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dip">
+        android:padding="6dp">
 
         <EditText
             android:id="@+id/textNewToDo"
@@ -86,9 +56,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         tools:listitem="@layout/row_list_to_do"
-        android:padding="6dip"
+        android:padding="6dp"
         android:layout_margin="6dp"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:choiceMode="singleChoice">
 
     </ListView>
 

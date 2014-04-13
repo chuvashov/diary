@@ -6,8 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import com.example.diary.R;
+import android.widget.TextView;
 
 /**
  * Adapter to bind a ToDoItem List to a view
@@ -19,19 +18,14 @@ public class ToDoItemAdapter extends ArrayAdapter<ToDoItem> {
 	 */
 	Context mContext;
 
-    private ToDoListFragment mFragment;
-
 	/**
 	 * Adapter View layout
 	 */
-	int mLayoutResourceId;
+	private static final int mLayoutResourceId = android.R.layout.simple_list_item_activated_1;
 
-	public ToDoItemAdapter(Context context, int layoutResourceId, ToDoListFragment fragment) {
-		super(context, layoutResourceId);
-
+	public ToDoItemAdapter(Context context) {
+		super(context, mLayoutResourceId);
 		mContext = context;
-		mLayoutResourceId = layoutResourceId;
-        mFragment = fragment;
 	}
 
 	/**
@@ -49,22 +43,11 @@ public class ToDoItemAdapter extends ArrayAdapter<ToDoItem> {
 		}
 
 		row.setTag(currentItem);
-		final CheckBox checkBox = (CheckBox) row.findViewById(R.id.checkToDoItem);
-		checkBox.setText(currentItem.getText());
-		checkBox.setChecked(false);
-		checkBox.setEnabled(true);
+		final TextView textView = (TextView) row.findViewById(android.R.id.text1);
+		textView.setText(currentItem.getText());
+		textView.setEnabled(true);
 
-		checkBox.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				if (checkBox.isChecked()) {
-					checkBox.setEnabled(false);
-					mFragment.checkItem(currentItem);
-				}
-		    }
-		});
-		return row;
+        return row;
 	}
 
 }

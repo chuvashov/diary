@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -17,14 +18,14 @@ import com.microsoft.windowsazure.mobileservices.*;
 import java.util.List;
 
 /**
- * Created by Andrey on 07.04.2014.
+ * Fragment to showing and changing notices
  */
 public class ToDoListFragment extends Fragment {
 
     /**
-     * Title of a warning dialog
+     * Title of a error dialog
      */
-    private static final String warning = "Warning";
+    private static final String error = "Error";
 
     /**
      * Mobile Service Client reference
@@ -46,7 +47,20 @@ public class ToDoListFragment extends Fragment {
      */
     private EditText mTextNewToDo;
 
-    private ToDoItem item;
+    /**
+     * ListView containing the all notices
+     */
+    private ListView listViewToDo;
+
+    /**
+     * Button to deleting
+     */
+    private Button delButton;
+
+    /**
+     * Button to editing
+     */
+    private Button editButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,21 +68,28 @@ public class ToDoListFragment extends Fragment {
         mTextNewToDo = (EditText) view.findViewById(R.id.textNewToDo);
 
         // Create listener to add button
-        Button add = (Button) view.findViewById(R.id.buttonAddToDo);
-        add.setOnClickListener(new View.OnClickListener() {
+        Button addButton = (Button) view.findViewById(R.id.buttonAddToDo);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addItem(v);
+                addItem();
+                setButtonsEnable(false);
             }
         });
 
         // Create listener to edit button
-        Button edit = (Button) view.findViewById(R.id.buttonEditToDo);
-        edit.setOnClickListener(new View.OnClickListener() {
+        editButton = (Button) view.findViewById(R.id.buttonEditToDo);
+        editButton.setEnabled(false);
+        editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                // Get chosen item
+                final ToDoItem item = mAdapter.getItem(listViewToDo.getCheckedItemPosition());
+
                 final EditText input = new EditText(getActivity());
+                input.setText(item.getText());
                 builder.setView(input);
 
                 // Create listener to positive button of the edit dialog
@@ -76,7 +97,8 @@ public class ToDoListFragment extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        editItem();
+                        setButtonsEnable(false);
+                        editItem(item, input.getText().toString());
                     }
                 });
 
@@ -86,11 +108,40 @@ public class ToDoListFragment extends Fragment {
             }
         });
 
+        // Create listener to delete button
+        delButton = (Button) view.findViewById(R.id.buttonDeleteToDo);
+        delButton.setEnabled(false);
+        delButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setButtonsEnable(false);
+                deleteItem(mAdapter.getItem(listViewToDo.getCheckedItemPosition()));
+            }
+        });
+
         // Create an adapter to bind the items with the view
-        mAdapter = new ToDoItemAdapter(getActivity(), R.layout.row_list_to_do, this);
-        ListView listViewToDo = (ListView) view.findViewById(R.id.listViewToDo);
+        mAdapter = new ToDoItemAdapter(getActivity());
+        listViewToDo = (ListView) view.findViewById(R.id.listViewToDo);
         listViewToDo.setAdapter(mAdapter);
+
+        listViewToDo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                setButtonsEnable(true);
+            }
+        });
         return view;
+    }
+
+    /**
+     * Set value the editButton and the delButton to enable
+     *
+     * @param value
+     *              The value to enable
+     */
+    private void setButtonsEnable(boolean value){
+        delButton.setEnabled(value);
+        editButton.setEnabled(value);
     }
 
     public void setClient(MobileServiceClient client){
@@ -104,45 +155,51 @@ public class ToDoListFragment extends Fragment {
     }
 
     /**
-     * Mark an item as completed
+     * Delete chosen item
      *
      * @param item
      *            The item to mark
      */
-    public void checkItem(ToDoItem item) {
-        if (mClient == null) {
+    public void deleteItem(final ToDoItem item) {
+        if (mClient == null || item == null) {
             return;
         }
 
-        mToDoTable.update(item, new TableOperationCallback<ToDoItem>() {
-
-            public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
+        mToDoTable.delete(item, new TableDeleteCallback() {
+            @Override
+            public void onCompleted(Exception exception, ServiceFilterResponse serviceFilterResponse) {
                 if (exception == null) {
-                    mAdapter.remove(entity);
+                    mAdapter.remove(item);
                 } else {
-                    Dialog.createAndShowDialog(exception, warning, getActivity());
+                    Dialog.createAndShowDialog(exception, error, getActivity());
                 }
+                setButtonsEnable(true);
             }
-
         });
     }
 
     /**
      * Edit the text of item
      */
-    public void editItem(){
+    private void editItem(final ToDoItem item, String newText){
         if (mClient == null || item == null) {
             return;
         }
 
+        item.setText(newText);
+
         mToDoTable.update(item, new TableOperationCallback<ToDoItem>() {
 
+            @Override
             public void onCompleted(ToDoItem entity, Exception exception, ServiceFilterResponse response) {
                 if (exception == null) {
-                    //mAdapter.remove(entity);
+                    mAdapter.remove(entity);
+                    mAdapter.add(entity);
+                    listViewToDo.setItemChecked(mAdapter.getPosition(entity), true);
                 } else {
-                    Dialog.createAndShowDialog(exception, warning, getActivity());
+                    Dialog.createAndShowDialog(exception, error, getActivity());
                 }
+                setButtonsEnable(true);
             }
 
         });
@@ -150,11 +207,8 @@ public class ToDoListFragment extends Fragment {
 
     /**
      * Add a new item
-     *
-     * @param view
-     *            The view that originated the call
      */
-    public void addItem(View view) {
+    private void addItem() {
         if (mClient == null) {
             return;
         }
@@ -172,9 +226,9 @@ public class ToDoListFragment extends Fragment {
                 if (exception == null) {
                     mAdapter.add(entity);
                 } else {
-                    Dialog.createAndShowDialog(exception, warning, getActivity());
+                    Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-
+                setButtonsEnable(true);
             }
         });
 
@@ -186,9 +240,10 @@ public class ToDoListFragment extends Fragment {
      */
     public void refreshItemsFromTable() {
 
-        // Get the items that weren't marked as completed and add them in the adapter
+        // Get the items and add them in the adapter
         mToDoTable.execute(new TableQueryCallback<ToDoItem>() {
 
+            @Override
             public void onCompleted(List<ToDoItem> result, int count, Exception exception, ServiceFilterResponse response) {
                 if (exception == null) {
                     mAdapter.clear();
@@ -198,7 +253,7 @@ public class ToDoListFragment extends Fragment {
                     }
 
                 } else {
-                    Dialog.createAndShowDialog(exception, warning, getActivity());
+                    Dialog.createAndShowDialog(exception, error, getActivity());
                 }
             }
         });
