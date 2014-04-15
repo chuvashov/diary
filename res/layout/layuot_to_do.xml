@@ -33,14 +33,22 @@
         android:layout_height="wrap_content"
         android:padding="6dp">
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/textNewToDo"
-            android:layout_width="0dip"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:maxHeight="200dp"
             android:ems="10"
             android:hint="@string/add_textbox_hint">
-       </EditText>
+       </AutoCompleteTextView>
+
+        <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_blue_light">
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/buttonAddToDo"
@@ -57,7 +65,6 @@
         android:layout_weight="1"
         tools:listitem="@layout/row_list_to_do"
         android:padding="6dp"
-        android:layout_margin="6dp"
         android:background="@android:color/white"
         android:choiceMode="singleChoice">
 

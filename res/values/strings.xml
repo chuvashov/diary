@@ -1,21 +1,36 @@
 <resources>
 
     <string name="app_name">Personal Diary</string>
+
+    <!-- labels for to do list -->
+    <string name="to_do_list">Notes</string>
     <string name="add_button_text">Add</string>
     <string name="delete_button_text">Delete</string>
     <string name="edit_button_text">Edit</string>
-    <string name="mobile_services">Mobile Services </string>
-    <string name="checkbox_text">Item Text</string>
+    <string name="add_textbox_hint">Input a notice</string>
 
-    <string name="add_textbox_hint">Add a notice</string>
     <string name="menu_refresh">Refresh</string>
-    <string name="to_do_list">Notes</string>
-    <string name="menu">Меню</string>
+    <string name="menu">Menu</string>
+
+    <!-- labels for profile -->
+    <string name="profile">Profile</string>
+    <string name="name_textbox_hint">your name</string>
+    <string name="surname_textbox_hint">your surname</string>
+    <string name="email_textbox_hint">your email</string>
+    <string name="phone_textbox_hint">your phone</string>
+    <string name="info_textbox_hint">info about you</string>
+    <string name="name_label">Name:</string>
+    <string name="surname_label">Surname:</string>
+    <string name="email_label">Email:</string>
+    <string name="phone_label">Phone:</string>
+    <string name="info_label">About you:</string>
+    <string name="ok_button">OK</string>
+    <string name="cancel_button">Cancel</string>
 
     <string-array name="menu_items">
-        <item>Профиль</item>
-        <item>Ежедневник</item>
-        <item>Заметки</item>
+        <item>Profile</item>
+        <item>Diary</item>
+        <item>Notices</item>
     </string-array>
     
 </resources>

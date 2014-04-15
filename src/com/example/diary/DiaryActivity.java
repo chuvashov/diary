@@ -3,13 +3,12 @@ package com.example.diary;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.util.DisplayMetrics;
+import android.view.*;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.example.diary.profile.ProfileFragment;
 import com.example.diary.todo.ToDoListFragment;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.microsoft.windowsazure.mobileservices.MobileServiceClient;
@@ -46,10 +45,13 @@ public class DiaryActivity extends Activity {
     private FragmentTransaction fTrans;
 
     private ToDoListFragment listFragment;
+    private ProfileFragment profileFragment;
 
-    private static final int TO_DO_LIST = 1;
+    private static final int PROFILE = 0;
+    private static final int DIARY = 1;
+    private static final int TO_DO_LIST = 2;
 
-    private int curMenuItem;
+    private int currentFragment;
 
 	/**
 	 * Initializes the activity
@@ -57,28 +59,44 @@ public class DiaryActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+        // Initialize progress bar
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+
         setContentView(R.layout.main_layout);
+        setProgressBarIndeterminateVisibility(false);
 
         // Initialize fragments
         listFragment = new ToDoListFragment();
+        profileFragment = new ProfileFragment();
 
         try {
             // Create the Mobile Service Client instance, using the provided
             // Mobile Service URL and key
-            mClient = new MobileServiceClient(DiaryActivity.appURL, DiaryActivity.appKey, this);
-            listFragment.setClient(mClient);
-
+            mClient = new MobileServiceClient(DiaryActivity.appURL, DiaryActivity.appKey, this).withFilter(
+                    new DiaryProgressFilter(this));
+            profileFragment.setClient(mClient);
         } catch (MalformedURLException e) {
             Dialog.createAndShowDialog(new Exception("There was an error connecting the Mobile Service"),
                     warning, this);
         }
 
         // Show the first fragment
-        curMenuItem = TO_DO_LIST;
+        currentFragment = PROFILE;
         fTrans = getFragmentManager().beginTransaction();
-        fTrans.add(R.id.mainFrameLayout, listFragment);
+        fTrans.add(R.id.mainFrameLayout, profileFragment);
         fTrans.commit();
         getActionBar().setTitle(R.string.to_do_list);
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int k = metrics.densityDpi / 160;
+        int offset;
+        if (metrics.widthPixels * k <= 460) {
+            offset = 60 / k;
+        } else {
+            offset = metrics.widthPixels * k - 400;
+        }
 
         // Create and setting Sliding Menu
         menu = new SlidingMenu(this);
@@ -86,7 +104,7 @@ public class DiaryActivity extends Activity {
         menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
         menu.setShadowWidthRes(R.dimen.shadow_width);
         menu.setShadowDrawable(R.drawable.shadow);
-        menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+        menu.setBehindOffset(offset);
         menu.setFadeDegree(0.35f);
         menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
         menu.setMenu(R.layout.sliding_menu);
@@ -100,14 +118,20 @@ public class DiaryActivity extends Activity {
         menuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position != curMenuItem) {
+                if (position != currentFragment) {
                     fTrans = getFragmentManager().beginTransaction();
                     switch (position) {
                         case TO_DO_LIST:
-                            fTrans.replace(R.layout.layuot_to_do, listFragment);
+                            fTrans.replace(R.id.mainFrameLayout, listFragment);
+                            listFragment.setClient(mClient);
+                            currentFragment = TO_DO_LIST;
                             getActionBar().setTitle(R.string.to_do_list);
                             break;
-
+                        case PROFILE:
+                            fTrans.replace(R.id.mainFrameLayout, profileFragment);
+                            profileFragment.setClient(mClient);
+                            currentFragment = PROFILE;
+                            getActionBar().setTitle(R.string.profile);
                     }
                     fTrans.commit();
                 }
@@ -145,9 +169,11 @@ public class DiaryActivity extends Activity {
     }
 
     private void refresh(){
-        switch (curMenuItem){
+        switch (currentFragment){
             case TO_DO_LIST:
                 listFragment.refreshItemsFromTable();
+            case PROFILE:
+                profileFragment.refresh();
         }
     }
 

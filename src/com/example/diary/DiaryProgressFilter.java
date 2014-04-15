@@ -1,19 +1,16 @@
-package com.example.diary.todo;
+package com.example.diary;
 
 import android.app.Activity;
-import android.widget.ProgressBar;
 import com.microsoft.windowsazure.mobileservices.*;
 
 /**
  * Created by Andrey on 07.04.2014.
  */
-public class ToDoProgressFilter implements ServiceFilter {
+public class DiaryProgressFilter implements ServiceFilter {
 
-    private ProgressBar mProgressBar;
     private Activity activity;
 
-    public ToDoProgressFilter(Activity activity, ProgressBar progressBar) {
-        mProgressBar = progressBar;
+    public DiaryProgressFilter(Activity activity) {
         this.activity = activity;
     }
 
@@ -24,9 +21,7 @@ public class ToDoProgressFilter implements ServiceFilter {
 
             @Override
             public void run() {
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(ProgressBar.VISIBLE);
-                }
+                activity.setProgressBarIndeterminateVisibility(true);
             }
         });
 
@@ -38,9 +33,7 @@ public class ToDoProgressFilter implements ServiceFilter {
 
                     @Override
                     public void run() {
-                        if (mProgressBar != null) {
-                            mProgressBar.setVisibility(ProgressBar.GONE);
-                        }
+                        activity.setProgressBarIndeterminateVisibility(false);
                     }
                 });
 

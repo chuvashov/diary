@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="shadow_width">15dp</dimen>
-    <dimen name="slidingmenu_offset">60dp</dimen>
     <dimen name="list_padding">10dp</dimen>
-
-    <dimen name="status_bar_text_size">40sp</dimen>
+    <dimen name="profile_padding">10dp</dimen>
 </resources>

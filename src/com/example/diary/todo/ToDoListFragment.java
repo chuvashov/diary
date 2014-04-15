@@ -83,6 +83,12 @@ public class ToDoListFragment extends Fragment {
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (listViewToDo.getCheckedItemPosition() < 0 ||
+                        listViewToDo.getCheckedItemPosition() >= mAdapter.getCount()) {
+                    setButtonsEnable(false);
+                    return;
+                }
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                 // Get chosen item
@@ -115,6 +121,11 @@ public class ToDoListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 setButtonsEnable(false);
+                if (listViewToDo.getCheckedItemPosition() < 0 &&
+                        listViewToDo.getCheckedItemPosition() >= mAdapter.getCount()) {
+                    return;
+                }
+
                 deleteItem(mAdapter.getItem(listViewToDo.getCheckedItemPosition()));
             }
         });
@@ -130,6 +141,7 @@ public class ToDoListFragment extends Fragment {
                 setButtonsEnable(true);
             }
         });
+
         return view;
     }
 
@@ -173,7 +185,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(true);
+                setButtonsEnable(false);
             }
         });
     }
@@ -199,7 +211,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(true);
+                setButtonsEnable(false);
             }
 
         });
@@ -228,7 +240,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(true);
+                setButtonsEnable(false);
             }
         });
 
@@ -258,5 +270,4 @@ public class ToDoListFragment extends Fragment {
             }
         });
     }
-
 }

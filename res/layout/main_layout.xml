@@ -1,7 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/mainFrameLayout">
-</FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/ter">
+
+    <!--LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/loadingLayout"
+            android:background="@color/fragment_color">
+
+        <TextView
+                android:id="@+id/textViewTitle"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_weight="0.12"
+                android:text="@string/loading"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <ProgressBar
+                android:id="@+id/loadingProgressBar"
+                android:layout_width="30dp"
+                android:layout_gravity="right"
+                android:layout_height="match_parent"/>
+
+    </LinearLayout-->
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mainFrameLayout">
+    </FrameLayout>
+
+</LinearLayout>
+
