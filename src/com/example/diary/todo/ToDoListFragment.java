@@ -28,6 +28,11 @@ public class ToDoListFragment extends Fragment {
     private static final String error = "Error";
 
     /**
+     * Key for save todo list
+     */
+    private static final String TO_DO_LIST_KEY = "TO_DO_LIST_KEY";
+
+    /**
      * Mobile Service Client reference
      */
     private MobileServiceClient mClient;
@@ -62,9 +67,13 @@ public class ToDoListFragment extends Fragment {
      */
     private Button editButton;
 
+    /**
+     * Creates view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.layuot_to_do, null);
+
         mTextNewToDo = (EditText) view.findViewById(R.id.textNewToDo);
 
         // Create listener to add button
@@ -121,7 +130,7 @@ public class ToDoListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 setButtonsEnable(false);
-                if (listViewToDo.getCheckedItemPosition() < 0 &&
+                if (listViewToDo.getCheckedItemPosition() < 0 ||
                         listViewToDo.getCheckedItemPosition() >= mAdapter.getCount()) {
                     return;
                 }
@@ -146,7 +155,7 @@ public class ToDoListFragment extends Fragment {
     }
 
     /**
-     * Set value the editButton and the delButton to enable
+     * Sets value the editButton and the delButton to enable
      *
      * @param value
      *              The value to enable
@@ -156,21 +165,24 @@ public class ToDoListFragment extends Fragment {
         editButton.setEnabled(value);
     }
 
+    /**
+     * Sets client for connect to service and get table from it
+     *
+     * @param client
+     *               The client for connect to service
+     */
     public void setClient(MobileServiceClient client){
         mClient = client;
 
         // Get the Mobile Service Table instance to use
         mToDoTable = mClient.getTable(ToDoItem.class);
-
-        // Load the items from the Mobile Service
-        refreshItemsFromTable();
     }
 
     /**
      * Delete chosen item
      *
      * @param item
-     *            The item to mark
+     *            The item to delete
      */
     public void deleteItem(final ToDoItem item) {
         if (mClient == null || item == null) {
@@ -185,7 +197,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(false);
+                activeButtons();
             }
         });
     }
@@ -211,7 +223,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(false);
+                activeButtons();
             }
 
         });
@@ -227,6 +239,7 @@ public class ToDoListFragment extends Fragment {
 
         // Create a new item
         ToDoItem item = new ToDoItem();
+        item.setUserId(mClient.getCurrentUser().getUserId());
 
         item.setText(mTextNewToDo.getText().toString());
 
@@ -240,7 +253,7 @@ public class ToDoListFragment extends Fragment {
                 } else {
                     Dialog.createAndShowDialog(exception, error, getActivity());
                 }
-                setButtonsEnable(false);
+                activeButtons();
             }
         });
 
@@ -250,10 +263,11 @@ public class ToDoListFragment extends Fragment {
     /**
      * Refresh the list with the items in the Mobile Service Table
      */
-    public void refreshItemsFromTable() {
+    public void refreshItems() {
 
         // Get the items and add them in the adapter
-        mToDoTable.execute(new TableQueryCallback<ToDoItem>() {
+        mToDoTable.where().field("user_id").eq(mClient.getCurrentUser().getUserId())
+                .execute(new TableQueryCallback<ToDoItem>() {
 
             @Override
             public void onCompleted(List<ToDoItem> result, int count, Exception exception, ServiceFilterResponse response) {
@@ -270,4 +284,18 @@ public class ToDoListFragment extends Fragment {
             }
         });
     }
+
+    /**
+     * If item is chosen make edit and delete buttons enable,
+     * otherwise make them disable
+     */
+    private void activeButtons() {
+        if (listViewToDo.getCheckedItemPosition() < 0 ||
+                listViewToDo.getCheckedItemPosition() >= mAdapter.getCount()) {
+            setButtonsEnable(false);
+        } else {
+            setButtonsEnable(true);
+        }
+    }
+
 }

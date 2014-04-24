@@ -4,29 +4,8 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/fragment_color"
-    >
-
-    <!--LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="6dip" >
-
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_weight="0.12"
-            android:text="@string/to_do_list"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <ProgressBar
-            android:id="@+id/loadingProgressBar"
-            android:layout_width="30dp"
-            android:layout_height="match_parent" />
-    </LinearLayout-->
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,37 +17,48 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:maxHeight="200dp"
+            android:maxHeight="150dp"
             android:ems="10"
+            android:paddingTop="10dp"
             android:hint="@string/add_textbox_hint">
        </AutoCompleteTextView>
 
         <LinearLayout
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_light">
-
-        </LinearLayout>
+                android:background="@android:color/holo_blue_light"/>
 
         <Button
-            android:id="@+id/buttonAddToDo"
-            android:layout_width="64dip"
-            android:layout_height="wrap_content"
-            android:text="@string/add_button_text" />
+                style="?android:attr/buttonBarButtonStyle"
+                android:id="@+id/buttonAddToDo"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/add_button_text" />
 
     </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_blue_light"/>
 
     <ListView
         android:id="@+id/listViewToDo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        tools:listitem="@layout/row_list_to_do"
         android:padding="6dp"
         android:background="@android:color/white"
         android:choiceMode="singleChoice">
 
     </ListView>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_blue_light"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,12 +69,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonDeleteToDo"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1"
                 android:text="@string/delete_button_text"/>
+
+        <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_blue_light"/>
 
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/buttonEditToDo"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_weight="1"
                 android:text="@string/edit_button_text"/>
 
     </LinearLayout>

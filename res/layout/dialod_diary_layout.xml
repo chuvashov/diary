@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/titleDialogView"
+            android:hint="title"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_blue_light"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonDateDiaryDialog"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="@string/sets_date"/>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:background="@android:color/holo_blue_light"/>
+
+    <AutoCompleteTextView
+            android:id="@+id/textDialogView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxHeight="150dp"
+            android:ems="10"
+            android:paddingTop="10dp"
+            android:hint="text">
+    </AutoCompleteTextView>
+
+
+</LinearLayout>

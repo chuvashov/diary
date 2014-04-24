@@ -1,9 +1,16 @@
 package com.example.diary.todo;
 
+
 /**
  * Represents an item in a ToDo list
  */
 public class ToDoItem {
+
+    /**
+     * User id
+     */
+    @com.google.gson.annotations.SerializedName("user_id")
+    private String mUserId;
 
 	/**
 	 * Item text
@@ -75,6 +82,23 @@ public class ToDoItem {
 	public final void setId(String id) {
 		mId = id;
 	}
+
+    /**
+     * Returns the items user id
+     */
+    public String getUserId() {
+        return mUserId;
+    }
+
+    /**
+     * Sets the item user id
+     *
+     * @param userId
+     *            id to set
+     */
+    public final void setUserId(String userId) {
+        mUserId = userId;
+    }
 
 	@Override
 	public boolean equals(Object o) {

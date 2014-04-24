@@ -4,38 +4,40 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/sliding_menu_color">
 
-    <TextView android:layout_width="match_parent"
+    <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/menu"
             android:gravity="center"
-            android:textSize="22sp"/>
-
-    <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="2dp"
-             android:background="@android:color/holo_blue_light">
-
-    </LinearLayout>
-
-    <!--TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:id="@+id/menuTextView"
-              android:padding="6dp"
-              android:text="Chuvashev Andrei"
-              android:textSize="16sp"/>
+            android:textSize="22sp"
+            android:textColor="@color/sliding_menu_text_color"/>
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/holo_blue_light">
+            android:layout_height="2dp"
+            android:background="@color/sliding_menu_title_separator"/>
 
-    </LinearLayout-->
-
-    <ListView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:id="@+id/menuListView">
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/menuListView"
+            android:textColor="@color/sliding_menu_text_color">
     </ListView>
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/sliding_menu_title_separator"/>
+
+    <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/logoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/logout"
+            android:onClick="logout"/>
 
 </LinearLayout>

@@ -1,5 +1,9 @@
 package com.example.diary.profile;
 
+
+/**
+ * Represents a profile in a ProfileFragment
+ */
 public class Profile {
 
     /**

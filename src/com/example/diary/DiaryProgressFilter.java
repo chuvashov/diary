@@ -4,12 +4,21 @@ import android.app.Activity;
 import com.microsoft.windowsazure.mobileservices.*;
 
 /**
- * Created by Andrey on 07.04.2014.
+ * Shows loading progress
  */
 public class DiaryProgressFilter implements ServiceFilter {
 
+    /**
+     * Activity reference
+     */
     private Activity activity;
 
+    /**
+     * DiaryProgressFilter constructor
+     *
+     * @param activity
+     *                The activity reference
+     */
     public DiaryProgressFilter(Activity activity) {
         this.activity = activity;
     }

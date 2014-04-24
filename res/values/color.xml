@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="status_bar_color">#222222</color>
-    <color name="sliding_menu_color">#7B68EE</color>
+    <color name="sliding_menu_color">#828282</color>
+    <color name="sliding_menu_text_color">#FFFAF0</color>
     <color name="fragment_color">#E0EEEE</color>
+    <color name="sliding_menu_title_separator">#CDC9C9</color>
 </resources>
