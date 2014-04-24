@@ -28,11 +28,6 @@ public class ToDoListFragment extends Fragment {
     private static final String error = "Error";
 
     /**
-     * Key for save todo list
-     */
-    private static final String TO_DO_LIST_KEY = "TO_DO_LIST_KEY";
-
-    /**
      * Mobile Service Client reference
      */
     private MobileServiceClient mClient;
